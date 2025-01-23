@@ -3,11 +3,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link"; // Import Next.js Link for navigation
+import { usePathname } from "next/navigation";
 import {
- AudioWaveform,
  BookOpen,
- Command,
  Frame,
  GalleryVerticalEnd,
  MessageSquareMore,
@@ -44,53 +42,53 @@ const data = {
  navMain: [
   {
    title: "Chat",
-   url: "/chat", // Specify the path
+   url: "/chat",
    icon: MessageSquareMore,
   },
   {
    title: "Config",
-   url: "/config", // Specify the path
+   url: "/config",
    icon: Settings,
   },
   {
    title: "Database",
-   url: "/database", // Specify the path
+   url: "/database",
    icon: Database,
    items: [
     {
      title: "Connectors",
-     url: "/database/connectors", // Specify subpath
+     url: "/database/connectors",
     },
     {
      title: "Loaders",
-     url: "/database/loaders", // Specify subpath
+     url: "/database/loaders",
     },
     {
      title: "Viewer",
-     url: "/database/viewer", // Specify subpath
+     url: "/database/viewer",
     },
    ],
   },
   {
    title: "Documentation",
-   url: "/documentation", // Specify the path
+   url: "/documentation",
    icon: BookOpen,
    items: [
     {
      title: "Introduction",
-     url: "/documentation/introduction", // Specify subpath
+     url: "/documentation/introduction",
     },
     {
      title: "Get Started",
-     url: "/documentation/get-started", // Specify subpath
+     url: "/documentation/get-started",
     },
     {
      title: "Tutorials",
-     url: "/documentation/tutorials", // Specify subpath
+     url: "/documentation/tutorials",
     },
     {
      title: "Changelog",
-     url: "/documentation/changelog", // Specify subpath
+     url: "/documentation/changelog",
     },
    ],
   },
@@ -98,21 +96,30 @@ const data = {
  projects: [
   {
    name: "Design Engineering",
-   url: "/projects/design-engineering", // Specify the path
+   url: "/projects/design-engineering",
    icon: Frame,
   },
  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+ const pathname = usePathname(); // Get the current path
+
+ // Add isActive logic to navigation items
+ const navMainWithActive = data.navMain.map((item) => ({
+  ...item,
+  isActive:
+   pathname === item.url || (item.items?.some((subItem) => pathname === subItem.url) ?? false),
+ }));
+
  return (
   <Sidebar collapsible="icon" {...props}>
    <SidebarHeader>
     <TeamSwitcher teams={data.teams} />
    </SidebarHeader>
    <SidebarContent>
-    {/* Pass routing paths to NavMain */}
-    <NavMain items={data.navMain} />
+    {/* Pass routing paths and active status to NavMain */}
+    <NavMain items={navMainWithActive} />
     <NavProjects projects={data.projects} />
    </SidebarContent>
    <SidebarFooter>
